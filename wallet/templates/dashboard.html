@@ -1,0 +1,111 @@
+<!-- wallet_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 24px;
+        }
+        .logout {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .balance-section {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .funds-section {
+            margin-top: 20px;
+        }
+        .funds-section input[type="number"] {
+            padding: 8px;
+            width: 150px;
+            margin-right: 10px;
+        }
+        .funds-section button {
+            padding: 8px 16px;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .add-btn {
+            background-color: #007bff;
+        }
+        .remove-btn {
+            background-color: #dc3545;
+        }
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .transaction-table th, .transaction-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .transaction-table th {
+            background-color: #f8f8f8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome {{ user.email }}</h1>
+            <a href="{% url 'logout' %}" class="logout">Logout</a>
+        </div>
+        
+        <div class="balance-section">
+            <p>Available Funds: Rs. {{ user_wallet.balance }}</p>
+        </div>
+
+        <div class="funds-section">
+            <form method="POST" action="{% url 'manage_funds' %}">
+                {% csrf_token %}
+                <label for="amount">Manage Funds</label>
+                <input type="number" name="amount" id="amount" step="0.01" required>
+                <button type="submit" name="action" value="add" class="add-btn">Add</button>
+                <button type="submit" name="action" value="remove" class="remove-btn">Remove</button>
+            </form>
+        </div>
+
+        <table class="transaction-table">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Amount</th>
+                    <th>Added by</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.date_time|date:"d/m/Y - H:i:s" }}</td>
+                        <td>{{ transaction.amount }}</td>
+                        <td>{{ transaction.added_by.email }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
